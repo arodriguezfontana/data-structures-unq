@@ -10,16 +10,14 @@ sumar n m = n + m
 
 divisionYResto :: Int -> Int -> (Int, Int)
 -- Dado dos números, devuelve un par donde la primera componente es la división del primero por el segundo, y la segunda componente es el resto de dicha división. Nota: para obtener el resto de la división utilizar la función mod :: Int -> Int -> Int, provista por Haskell.
-divisionYResto n m =  (div n m, mod n m)
+divisionYResto n m = (div n m, mod n m)
 
 maxDelPar :: (Int, Int) -> Int
 -- Dado un par de números devuelve el mayor de estos.
 maxDelPar (n, m) = if n > m 
                     then n 
                     else m
-
--- TODO ejemplos
-
+                    
 -- TIPOS ENUMERATIVOS
 
 data Dir = Norte | Este | Sur | Oeste deriving Show
@@ -106,3 +104,101 @@ oBien False a = a
 oBien True _ = True
 
 -- REGISTROS
+
+type Nombre = String
+type Edad = Int
+
+data Persona = P Nombre Edad deriving Show
+
+nombre :: Persona -> String
+-- Devuelve el nombre de una persona.
+nombre (P n _) = n
+
+edad :: Persona -> Int
+-- Devuelve la edad de una persona.
+edad (P _ e) = e
+
+crecer :: Persona -> Persona
+-- Aumenta en uno la edad de la persona.
+crecer (P n e) = P n (e+1)
+
+cambioDeNombre :: String -> Persona -> Persona
+-- Dados un nombre y una persona, devuelve una persona con la edad de la persona y el nuevo nombre.
+cambioDeNombre n2 (P _ e) = P n2 e
+
+esMayorQueLaOtra :: Persona -> Persona -> Bool
+-- Dadas dos personas indica si la primera es mayor que la segunda.
+esMayorQueLaOtra p1 p2 = edad(p1) > edad(p2)
+
+laQueEsMayor :: Persona -> Persona -> Persona
+-- Dadas dos personas devuelve a la persona que sea mayor.
+laQueEsMayor p1 p2 = if esMayorQueLaOtra p1 p2
+                      then p1
+                      else p2
+
+type Energia = Int
+
+data Pokemon = Pk TipoDePokemon Energia deriving Show
+data TipoDePokemon = Agua | Fuego | Planta deriving Show
+data Entrenador = E Nombre Pokemon Pokemon deriving Show
+
+superaA :: Pokemon -> Pokemon -> Bool
+-- Dados dos Pokémon indica si el primero, en base al tipo, es superior al segundo. Agua supera a fuego, fuego a planta y planta a agua. Y cualquier otro caso es falso.
+superaA p1 p2 = esSuperior (tipo p1) (tipo p2)
+
+tipo :: Pokemon -> TipoDePokemon
+tipo (Pk t _) = t
+
+esSuperior :: TipoDePokemon -> TipoDePokemon -> Bool
+esSuperior Agua Fuego = True
+esSuperior Fuego Planta = True
+esSuperior Planta Agua = True
+esSuperior _ _ = False
+
+cantidadDePokemonDe :: TipoDePokemon -> Entrenador -> Int
+-- Devuelve la cantidad de Pokémon de determinado tipo que posee el entrenador.
+cantidadDePokemonDe t (E _ p1 p2) = unoSi(sonMismoTipo t (tipo p1)) + unoSi(sonMismoTipo t (tipo p2))
+
+juntarPokemon :: (Entrenador, Entrenador) -> [Pokemon]
+-- Dado un par de entrenadores, devuelve a sus Pokémon en una lista.
+juntarPokemon (e1, e2) = pokemonsDe e1 ++ pokemonsDe e2
+
+pokemonsDe :: Entrenador -> [Pokemon]
+pokemonsDe (E _ p1 p2) = [p1, p2]
+
+-- FUNCIONES POLIMÓRFICAS
+
+loMismo :: a -> a
+-- Dado un elemento de algún tipo devuelve ese mismo elemento.
+loMismo x = x
+
+siempreSiete :: a -> Int
+-- Dado un elemento de algún tipo devuelve el número 7.
+siempreSiete _ = 7
+
+swap :: (a, b) -> (b, a)
+-- Dadas una tupla, invierte sus componentes. ¿Por qué existen dos variables de tipo diferentes?
+swap (x, y) = (y, x)
+
+-- PATTERN MATCHING SOBRE LISTAS
+
+estaVacia :: [a] -> Bool
+-- Dada una lista de elementos, si es vacía devuelve True, sino devuelve False. Definida en Haskell como null.
+estaVacia [] = True
+estaVacia _ = False
+
+elPrimero :: [a] -> a
+-- Dada una lista devuelve su primer elemento. Definida en Haskell como head.
+elPrimero [] = error "La lista está vacía"
+elPrimero (x:_) = x
+
+sinElPrimero :: [a] -> [a]
+-- Dada una lista devuelve esa lista menos el primer elemento. Definida en Haskell como tail.
+sinElPrimero [] = error "La lista está vacía"
+sinElPrimero (_:xs) = xs
+
+splitHead :: [a] -> (a, [a])
+splitHead :: [a] -> (a, [a])
+-- Dada una lista devuelve un par, donde la primera componente es el primer elemento de la lista, y la segunda componente es esa lista pero sin el primero.
+splitHead [] = error "La lista está vacía"
+splitHead (x:xs) = (x, xs)
