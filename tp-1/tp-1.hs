@@ -38,13 +38,11 @@ iguales Oeste Oeste = True
 iguales _ _ = False
 
 siguiente :: Dir -> Dir
--- Dada una dirección devuelve su siguiente, en sentido horario, y suponiendo que no existe la siguiente dirección a Oeste. ¿Posee una precondición esta función? ¿Es una función total o parcial? ¿Por qué?.
+-- Dada una dirección devuelve su siguiente, en sentido horario, y suponiendo que no existe la siguiente dirección a Oeste.
 siguiente Norte = Este
 siguiente Este = Sur
 siguiente Sur = Oeste
-siguiente Oeste = error "No existe una dirreción siguiente al Oeste"
-
--- TODO . ¾Posee una precondición esta función? ¾Es una funcióntotal o parcial? ¾Por qué?
+siguiente Oeste = error "No existe una dirección siguiente al Oeste."
 
 data DiaDeSemana = Lunes | Martes | Miercoles | Jueves | Viernes | Sabado | Domingo deriving Show
 
@@ -107,7 +105,6 @@ oBien True _ = True
 
 type Nombre = String
 type Edad = Int
-
 data Persona = P Nombre Edad deriving Show
 
 nombre :: Persona -> String
@@ -137,7 +134,6 @@ laQueEsMayor p1 p2 = if esMayorQueLaOtra p1 p2
                       else p2
 
 type Energia = Int
-
 data Pokemon = Pk TipoDePokemon Energia deriving Show
 data TipoDePokemon = Agua | Fuego | Planta deriving Show
 data Entrenador = E Nombre Pokemon Pokemon deriving Show
@@ -177,7 +173,7 @@ siempreSiete :: a -> Int
 siempreSiete _ = 7
 
 swap :: (a, b) -> (b, a)
--- Dadas una tupla, invierte sus componentes. ¿Por qué existen dos variables de tipo diferentes?
+-- Dadas una tupla, invierte sus componentes.
 swap (x, y) = (y, x)
 
 -- PATTERN MATCHING SOBRE LISTAS
@@ -189,16 +185,15 @@ estaVacia _ = False
 
 elPrimero :: [a] -> a
 -- Dada una lista devuelve su primer elemento. Definida en Haskell como head.
-elPrimero [] = error "La lista está vacía"
+elPrimero [] = error "La lista está vacía."
 elPrimero (x:_) = x
 
 sinElPrimero :: [a] -> [a]
 -- Dada una lista devuelve esa lista menos el primer elemento. Definida en Haskell como tail.
-sinElPrimero [] = error "La lista está vacía"
+sinElPrimero [] = error "La lista está vacía."
 sinElPrimero (_:xs) = xs
 
 splitHead :: [a] -> (a, [a])
-splitHead :: [a] -> (a, [a])
 -- Dada una lista devuelve un par, donde la primera componente es el primer elemento de la lista, y la segunda componente es esa lista pero sin el primero.
-splitHead [] = error "La lista está vacía"
+splitHead [] = error "La lista está vacía."
 splitHead (x:xs) = (x, xs)
