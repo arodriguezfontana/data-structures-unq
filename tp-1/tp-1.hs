@@ -155,6 +155,16 @@ cantidadDePokemonDe :: TipoDePokemon -> Entrenador -> Int
 -- Devuelve la cantidad de Pokémon de determinado tipo que posee el entrenador.
 cantidadDePokemonDe t (E _ p1 p2) = unoSi(sonMismoTipo t (tipo p1)) + unoSi(sonMismoTipo t (tipo p2))
 
+unoSi :: Bool -> Int
+unoSi True = 1
+unoSi False = 0
+
+sonMismoTipo :: TipoDePokemon -> TipoDePokemon -> Bool
+sonMismoTipo Agua Agua = True
+sonMismoTipo Fuego Fuego = True
+sonMismoTipo Planta Planta = True
+sonMismoTipo _ _ = False
+
 juntarPokemon :: (Entrenador, Entrenador) -> [Pokemon]
 -- Dado un par de entrenadores, devuelve a sus Pokémon en una lista.
 juntarPokemon (e1, e2) = pokemonsDe e1 ++ pokemonsDe e2
