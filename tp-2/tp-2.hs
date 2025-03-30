@@ -221,15 +221,6 @@ data Proyecto = Py Nombre deriving Show
 data Rol = Developer Seniority Proyecto | Management Seniority Proyecto deriving Show
 data Empresa = Em [Rol] deriving Show
 
-e = Em [r1,r2,r3,r4,r5]
-r1 = Developer Senior p2
-r2 = Developer Senior p2
-r3 = Developer Junior p1 
-r4 = Management Junior p2
-r5 = Management Senior p1
-p1 = Py "Agua"
-p2 = Py "Fuego"
-
 proyectos :: Empresa -> [Proyecto]
 -- Dada una empresa denota la lista de proyectos en los que trabaja, sin elementos repetidos.
 proyectos (Em rs) = proyectosR rs
