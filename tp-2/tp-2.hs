@@ -1,4 +1,4 @@
--- RECCURSIÓN SOBRE LISTAS
+-- RECURSIÓN SOBRE LISTAS
 
 sumatoria :: [Int] -> Int
 -- Dada una lista de enteros devuelve la suma de todos sus elementos.
