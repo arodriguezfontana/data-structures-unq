@@ -101,10 +101,88 @@ caminoHasta n (Nada c) = Nada (caminoHasta (n-1) c)
 data Tree a = EmptyT | NodeT a (Tree a) (Tree a) deriving Show
 
 t1 :: Tree Int
-t1 = NodeT 4 (NodeT 5 (NodeT 2 EmptyT EmptyT) EmptyT) 
-             (NodeT 3 EmptyT EmptyT)
+t1 = NodeT 4 (NodeT 5 (NodeT 6 EmptyT EmptyT) EmptyT) 
+             (NodeT 3 EmptyT (NodeT 7 (NodeT 6 EmptyT EmptyT) EmptyT))
 
 sumarT :: Tree Int -> Int
 -- Dado un árbol binario de enteros devuelve la suma entre sus elementos.
 sumarT EmptyT = 0
 sumarT (NodeT n t1 t2) = n + (sumarT t1) + (sumarT t2)
+
+sizeT :: Tree a -> Int
+-- Dado un árbol binario devuelve su cantidad de elementos, es decir, el tamaño del árbol (size en inglés).
+sizeT EmptyT = 0
+sizeT (NodeT n ri rd) = 1 + (sizeT ri) + (sizeT rd)
+
+mapDobleT :: Tree Int -> Tree Int
+-- Dado un árbol de enteros devuelve un árbol con el doble de cada número.
+mapDobleT EmptyT = EmptyT
+mapDobleT (NodeT n ri rd) = NodeT (n*2) (mapDobleT ri) (mapDobleT rd)
+
+perteneceT :: Eq a => a -> Tree a -> Bool
+-- Dados un elemento y un árbol binario devuelve True si existe un elemento igual a ese en el árbol.
+perteneceT _ EmptyT = False
+perteneceT x (NodeT n ri rd) = x==n || (perteneceT x ri) || (perteneceT x rd)
+
+aparicionesT :: Eq a => a -> Tree a -> Int
+-- Dados un elemento e y un árbol binario devuelve la cantidad de elementos del árbol que son iguales a e.
+aparicionesT _ EmptyT = 0
+aparicionesT x (NodeT n ri rd) = unoSi (x==n) + (aparicionesT x ri) + (aparicionesT x rd)
+
+leaves :: Tree a -> [a]
+-- Dado un árbol devuelve los elementos que se encuentran en sus hojas. NOTA: en este tipo se define como hoja a un nodo con dos hijos vacíos.
+leaves EmptyT = []
+leaves (NodeT n EmptyT EmptyT) = [n]
+leaves (NodeT _ ri rd) = leaves ri ++ leaves rd
+
+heightT :: Tree a -> Int
+-- Dado un árbol devuelve su altura. Nota: la altura de un árbol (height en inglés), también llamada profundidad, es la cantidad de niveles del árbol. La altura para EmptyT es 0, y para una hoja es 1.
+heightT EmptyT = 0
+heightT (NodeT n ri rd) = 1 + max (heightT ri) (heightT rd)
+
+mirrorT :: Tree a -> Tree a
+-- Dado un árbol devuelve el árbol resultante de intercambiar el hijo izquierdo con el derecho, en cada nodo del árbol.
+mirrorT EmptyT = EmptyT
+mirrorT (NodeT n ri rd) = NodeT n (mirrorT rd) (mirrorT ri)
+
+toList :: Tree a -> [a]
+-- Dado un árbol devuelve una lista que representa el resultado de recorrerlo en modo in-order. Nota: En el modo in-order primero se procesan los elementos del hijo izquierdo, luego la raiz y luego los elementos del hijo derecho.
+toList EmptyT = []
+toList (NodeT n ri rd) = toList ri ++ [n] ++ toList rd
+
+-- levelN :: Int -> Tree a -> [a]
+-- -- Dados un número n y un árbol devuelve una lista con los nodos de nivel n. El nivel de un nodo es la distancia que hay de la raíz hasta él. La distancia de la raiz a sí misma es 0, y la distancia de la raiz a uno de sus hijos es 1. Nota: El primer nivel de un árbol (su raíz) es 0.
+-- levelN m EmptyT =
+-- levelN m (NodeT n ri rd) = (levelN m ri) (levelN m rd)
+
+-- listPerLevel :: Tree a -> [[a]]
+-- -- Dado un árbol devuelve una lista de listas en la que cada elemento representa un nivel de dicho árbol.
+
+ramaMasLarga :: Tree a -> [a]
+-- Devuelve los elementos de la rama más larga del árbol
+ramaMasLarga EmptyT = []
+ramaMasLarga (NodeT n ri rd) = n : laDeMayorLongitud (ramaMasLarga ri) (ramaMasLarga rd)
+
+laDeMayorLongitud :: [a] -> [a] -> [a]
+laDeMayorLongitud xs ys = if longitud xs > longitud ys
+                           then xs
+                           else ys
+
+longitud :: [a] -> Int
+longitud [] = 0
+longitud (x:xs) = 1 + longitud xs
+
+-- todosLosCaminos :: Tree a -> [[a]]
+-- -- Dado un árbol devuelve todos los caminos, es decir, los caminos desde la raíz hasta cualquiera de los nodos. ATENCIÓN: se trata de todos los caminos, y no solamente de los maximales (o sea, de la raíz hasta la hoja).
+
+-- data ExpA = Valor Int | Sum ExpA ExpA | Prod ExpA ExpA | Neg ExpA
+
+-- eval :: ExpA -> Int
+-- -- Dada una expresión aritmética devuelve el resultado evaluarla.
+
+-- simplificar :: ExpA -> ExpA
+-- -- Dada una expresión aritmética, la simplifica según los siguientes criterios (descritos utilizando notación matemática convencional):
+-- -- a) 0 + x = x + 0 = x
+-- -- b) 0 * x = x * 0 = 0
+-- -- c) 1 * x = x * 1 = x
+-- -- d) - (- x) = x
