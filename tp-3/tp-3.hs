@@ -98,3 +98,13 @@ caminoHasta n (Nada c) = Nada (caminoHasta (n-1) c)
 
 -- TIPOS ARBÓREOS
 
+data Tree a = EmptyT | NodeT a (Tree a) (Tree a) deriving Show
+
+t1 :: Tree Int
+t1 = NodeT 4 (NodeT 5 (NodeT 2 EmptyT EmptyT) EmptyT) 
+             (NodeT 3 EmptyT EmptyT)
+
+sumarT :: Tree Int -> Int
+-- Dado un árbol binario de enteros devuelve la suma entre sus elementos.
+sumarT EmptyT = 0
+sumarT (NodeT n t1 t2) = n + (sumarT t1) + (sumarT t2)
