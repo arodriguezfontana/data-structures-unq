@@ -100,10 +100,6 @@ caminoHasta n (Nada c) = Nada (caminoHasta (n-1) c)
 
 data Tree a = EmptyT | NodeT a (Tree a) (Tree a) deriving Show
 
-t1 :: Tree Int
-t1 = NodeT 4 (NodeT 5 (NodeT 6 EmptyT EmptyT) EmptyT) 
-             (NodeT 3 EmptyT (NodeT 7 (NodeT 6 EmptyT EmptyT) EmptyT))
-
 sumarT :: Tree Int -> Int
 -- Dado un árbol binario de enteros devuelve la suma entre sus elementos.
 sumarT EmptyT = 0
@@ -194,14 +190,37 @@ todosLosCaminosMaximales EmptyT = []
 todosLosCaminosMaximales (NodeT n EmptyT EmptyT) = [[n]]
 todosLosCaminosMaximales (NodeT n ri rd) = (agregoACada n (todosLosCaminosMaximales ri)) ++ (agregoACada n (todosLosCaminosMaximales rd))
 
--- data ExpA = Valor Int | Sum ExpA ExpA | Prod ExpA ExpA | Neg ExpA
+-- EXPRECIONES ARITMÉTICAS
 
--- eval :: ExpA -> Int
--- -- Dada una expresión aritmética devuelve el resultado evaluarla.
+data ExpA = Valor Int | Sum ExpA ExpA | Prod ExpA ExpA | Neg ExpA
 
--- simplificar :: ExpA -> ExpA
--- -- Dada una expresión aritmética, la simplifica según los siguientes criterios (descritos utilizando notación matemática convencional):
--- -- a) 0 + x = x + 0 = x
--- -- b) 0 * x = x * 0 = 0
--- -- c) 1 * x = x * 1 = x
--- -- d) - (- x) = x
+eval :: ExpA -> Int
+-- Dada una expresión aritmética devuelve el resultado evaluarla.
+eval (Valor i) = i
+eval (Sum e1 e2) = eval e1 + eval e2
+eval (Prod e1 e2) = eval e1 * eval e2
+eval (Neg e) = - eval e
+
+simplificar :: ExpA -> ExpA
+-- Dada una expresión aritmética, la simplifica según los siguientes criterios (descritos utilizando notación matemática convencional): a) 0 + x = x + 0 = x, b) 0 * x = x * 0 = 0, c) 1 * x = x * 1 = x, d) - (- x) = x.
+simplificar (Valor i) = Valor i
+simplificar (Sum e1 e2) = simplificarSum (simplificar e1) (simplificar e2)
+simplificar (Prod e1 e2) = simplificarProd (simplificar e1) (simplificar e2)
+simplificar (Neg e) = simplificarNeg (simplificar e)
+
+simplificarSum :: ExpA -> ExpA -> ExpA
+simplificarSum (Valor 0) e = e
+simplificarSum e (Valor 0) = e
+simplificarSum e1 e2 = Sum e1 e2
+
+simplificarProd :: ExpA -> ExpA -> ExpA
+simplificarProd (Valor 0) e = Valor 0
+simplificarProd e (Valor 0) = Valor 0
+simplificarProd (Valor 1) e = e
+simplificarProd e (Valor 1) = e
+simplificarProd e1 e2 = Prod e1 e2
+
+simplificarNeg :: ExpA -> ExpA
+simplificarNeg (Neg e) = e
+simplificarNeg (Valor 0) = Valor 0
+simplificarNeg e = Neg e
