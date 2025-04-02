@@ -189,7 +189,10 @@ agregoACada :: a -> [[a]] -> [[a]]
 agregoACada _ [] = []
 agregoACada x (ys:yss) = (x : ys) : agregoACada x yss
 
--- todosLosCaminosMaximales
+todosLosCaminosMaximales :: Tree a -> [[a]]
+todosLosCaminosMaximales EmptyT = []
+todosLosCaminosMaximales (NodeT n EmptyT EmptyT) = [[n]]
+todosLosCaminosMaximales (NodeT n ri rd) = (agregoACada n (todosLosCaminosMaximales ri)) ++ (agregoACada n (todosLosCaminosMaximales rd))
 
 -- data ExpA = Valor Int | Sum ExpA ExpA | Prod ExpA ExpA | Neg ExpA
 
