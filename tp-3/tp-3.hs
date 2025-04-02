@@ -150,13 +150,21 @@ toList :: Tree a -> [a]
 toList EmptyT = []
 toList (NodeT n ri rd) = toList ri ++ [n] ++ toList rd
 
--- levelN :: Int -> Tree a -> [a]
--- -- Dados un número n y un árbol devuelve una lista con los nodos de nivel n. El nivel de un nodo es la distancia que hay de la raíz hasta él. La distancia de la raiz a sí misma es 0, y la distancia de la raiz a uno de sus hijos es 1. Nota: El primer nivel de un árbol (su raíz) es 0.
--- levelN m EmptyT =
--- levelN m (NodeT n ri rd) = (levelN m ri) (levelN m rd)
+levelN :: Int -> Tree a -> [a]
+-- Dados un número n y un árbol devuelve una lista con los nodos de nivel n. El nivel de un nodo es la distancia que hay de la raíz hasta él. La distancia de la raiz a sí misma es 0, y la distancia de la raiz a uno de sus hijos es 1. Nota: El primer nivel de un árbol (su raíz) es 0.
+levelN _ EmptyT = []
+levelN 0 (NodeT n ri rd) = [n]
+levelN m (NodeT n ri rd) = levelN (m-1) ri ++ levelN (m-1) rd
 
--- listPerLevel :: Tree a -> [[a]]
--- -- Dado un árbol devuelve una lista de listas en la que cada elemento representa un nivel de dicho árbol.
+listPerLevel :: Tree a -> [[a]]
+-- Dado un árbol devuelve una lista de listas en la que cada elemento representa un nivel de dicho árbol.
+listPerLevel EmptyT = []
+listPerLevel (NodeT n ri rd) = [n] : zipListaDeListas (listPerLevel ri) (listPerLevel rd)
+
+zipListaDeListas :: [[a]] -> [[a]] -> [[a]]
+zipListaDeListas [] yss = yss
+zipListaDeListas xss [] = xss
+zipListaDeListas (xs:xss) (ys:yss) = (ys ++ xs) : (zipListaDeListas xss yss)
 
 ramaMasLarga :: Tree a -> [a]
 -- Devuelve los elementos de la rama más larga del árbol
@@ -172,8 +180,16 @@ longitud :: [a] -> Int
 longitud [] = 0
 longitud (x:xs) = 1 + longitud xs
 
--- todosLosCaminos :: Tree a -> [[a]]
--- -- Dado un árbol devuelve todos los caminos, es decir, los caminos desde la raíz hasta cualquiera de los nodos. ATENCIÓN: se trata de todos los caminos, y no solamente de los maximales (o sea, de la raíz hasta la hoja).
+todosLosCaminos :: Tree a -> [[a]]
+-- Dado un árbol devuelve todos los caminos, es decir, los caminos desde la raíz hasta cualquiera de los nodos. ATENCIÓN: se trata de todos los caminos, y no solamente de los maximales (o sea, de la raíz hasta la hoja).
+todosLosCaminos EmptyT = []
+todosLosCaminos (NodeT n ri rd) = [n] : (agregoACada n (todosLosCaminos ri) ++ agregoACada n (todosLosCaminos rd))
+
+agregoACada :: a -> [[a]] -> [[a]]
+agregoACada _ [] = []
+agregoACada x (ys:yss) = (x : ys) : agregoACada x yss
+
+-- todosLosCaminosMaximales
 
 -- data ExpA = Valor Int | Sum ExpA ExpA | Prod ExpA ExpA | Neg ExpA
 
