@@ -274,9 +274,14 @@ cantQueTrabajanEnR ps [] = 0
 cantQueTrabajanEnR ps (r:rs) = unoSi (perteneceAAlguno r ps) + cantQueTrabajanEnR ps rs
 
 asignadosPorProyecto :: Empresa -> [(Proyecto, Int)]
--- Devuelve una lista de pares que representa a los proyectos (sin repetir) junto con su cantidad de personas involucradas.
-asignadosPorProyecto e = asignadosPorProyectoP (proyectos e) e
+asignadosPorProyecto (Em rs) = asignadosPorProyectoR rs
 
-asignadosPorProyectoP :: [Proyecto] -> Empresa -> [(Proyecto, Int)]
-asignadosPorProyectoP [] _ = []
-asignadosPorProyectoP (p:ps) e = (p, cantQueTrabajanEn [p] e) : asignadosPorProyectoP ps e
+asignadosPorProyectoR :: [Rol] -> [(Proyecto, Int)]
+asignadosPorProyectoR [] = []
+asignadosPorProyectoR (r:rs) = agregarProyectoA r (asignadosPorProyectoR rs)
+
+agregarProyectoA :: Rol -> [(Proyecto, Int)] -> [(Proyecto, Int)]
+agregarProyectoA r [] = [(proyectoDe r, 1)]
+agregarProyectoA r ((p,i):pis) = if sonMismoProyecto (proyectoDe r) p
+                                    then (p,i+1) : agregarProyectoA r pis
+                                    else agregarProyectoA r pis
