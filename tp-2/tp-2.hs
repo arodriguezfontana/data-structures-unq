@@ -100,8 +100,9 @@ factorial n = n * factorial (n-1)
 
 cuentaRegresiva :: Int -> [Int]
 -- Dado un número n devuelve una lista cuyos elementos sean los números comprendidos entre n y 1 (incluidos). Si el número es inferior a 1, devuelve la lista vacía.
-cuentaRegresiva 0 = []
-cuentaRegresiva n = n : cuentaRegresiva (n-1)
+cuentaRegresiva n = if n < 1 
+                     then []
+                     else n : cuentaRegresiva (n-1)
 
 repetir :: Int -> a -> [a]
 -- Dado un número n y un elemento e devuelve una lista en la que el elemento e repite n veces.
@@ -187,9 +188,9 @@ sonMismoTipo _ _ = False
 tipo :: Pokemon -> TipoDePokemon
 tipo (Pk t _) = t
 
-cuantosDeTipoDeLeGananATodosLosDe :: TipoDePokemon -> Entrenador -> Entrenador -> Int
+cuantosDeTipo_De_LeGananATodosLosDe_ :: TipoDePokemon -> Entrenador -> Entrenador -> Int
 -- Dados dos entrenadores, indica la cantidad de Pokemon de cierto tipo pertenecientes al primer entrenador, que le ganarían a todos los Pokemon del segundo entrenador.
-cuantosDeTipoDeLeGananATodosLosDe t e1 e2 = cantQueLeGananATodosDe t (pokemonsDe e1) (pokemonsDe e2)
+cuantosDeTipo_De_LeGananATodosLosDe_ t e1 e2 = cantQueLeGananATodosDe t (pokemonsDe e1) (pokemonsDe e2)
 
 pokemonsDe :: Entrenador -> [Pokemon]
 pokemonsDe (E _ ps) = ps
@@ -278,10 +279,10 @@ asignadosPorProyecto (Em rs) = asignadosPorProyectoR rs
 
 asignadosPorProyectoR :: [Rol] -> [(Proyecto, Int)]
 asignadosPorProyectoR [] = []
-asignadosPorProyectoR (r:rs) = agregarProyectoA r (asignadosPorProyectoR rs)
+asignadosPorProyectoR (r:rs) = agregarProyectoA (proyectoDe r) (asignadosPorProyectoR rs)
 
-agregarProyectoA :: Rol -> [(Proyecto, Int)] -> [(Proyecto, Int)]
-agregarProyectoA r [] = [(proyectoDe r, 1)]
-agregarProyectoA r ((p,i):pis) = if sonMismoProyecto (proyectoDe r) p
-                                    then (p,i+1) : agregarProyectoA r pis
-                                    else agregarProyectoA r pis
+agregarProyectoA :: Proyecto -> [(Proyecto, Int)] -> [(Proyecto, Int)]
+agregarProyectoA p1 [] = [(p1, 1)]
+agregarProyectoA p1 ((p2,i):p2is) = if sonMismoProyecto p1 p2
+                                    then (p2,i+1) : p2is
+                                    else (p2,i) : agregarProyectoA p1 p2is
