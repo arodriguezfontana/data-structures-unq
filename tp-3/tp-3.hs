@@ -163,7 +163,7 @@ zipListaDeListas xss [] = xss
 zipListaDeListas (xs:xss) (ys:yss) = (ys ++ xs) : (zipListaDeListas xss yss)
 
 ramaMasLarga :: Tree a -> [a]
--- Devuelve los elementos de la rama más larga del árbol
+-- Devuelve los elementos de la rama más larga del árbol.
 ramaMasLarga EmptyT = []
 ramaMasLarga (NodeT n ri rd) = n : laDeMayorLongitud (ramaMasLarga ri) (ramaMasLarga rd)
 
