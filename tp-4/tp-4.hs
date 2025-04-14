@@ -168,43 +168,6 @@ data Sector = S SectorId [Componente] [Tripulante] deriving Show
 data Tree a = EmptyT | NodeT a (Tree a) (Tree a) deriving Show
 data Nave = N (Tree Sector) deriving Show
 
--- Paso 1: Algunos barriles
-b1 :: [Barril]
-b1 = [Comida, Oxigeno, Torpedo, Combustible]
-
-b2 :: [Barril]
-b2 = [Comida, Comida, Oxigeno]
-
--- Paso 2: Algunos componentes
-c1 :: [Componente]
-c1 = [Motor 10, LanzaTorpedos, Almacen b1]
-
-c2 :: [Componente]
-c2 = [Motor 35, Almacen b2]
-
-c3 :: [Componente]
-c3 = [LanzaTorpedos]
-
--- Paso 3: Algunos sectores
-sA :: Sector
-sA = S "A" c1 ["Alice", "Bob"]
-
-sB :: Sector
-sB = S "B" c2 ["Charlie"]
-
-sC :: Sector
-sC = S "C" c3 ["Daisy", "Eve"]
-
--- Paso 4: Árbol de sectores (puede crecer más)
-ts :: Tree Sector
-ts = NodeT sA 
-                    (NodeT sB (NodeT sB EmptyT EmptyT) EmptyT)
-                    (NodeT sC EmptyT EmptyT)
-
--- Paso 5: La nave
-n :: Nave
-n = N ts
-
 sectores :: Nave -> [SectorId]
 -- Propósito: Devuelve todos los sectores de la nave.
 sectores (N ts) = sectoresT ts
@@ -260,7 +223,7 @@ agregarASector cs sid (N ts) = N (tsConComponentes cs sid ts)
 
 tsConComponentes :: [Componente] -> SectorId -> Tree Sector -> Tree Sector
 tsConComponentes cs sid (EmptyT) = EmptyT
-tsConComponentes cs sid (NodeT s si sd) = NodeT (sConComponentesAgregadosSi cs (sid == (sectorIdS s)) s) (tsConComponentes cs sid si) (tsConComponentes cs sid sd)
+tsConComponentes cs sid (NodeT s si sd) = NodeT (sConComponentesAgregadosSi cs (sid == (sectorIdDe s)) s) (tsConComponentes cs sid si) (tsConComponentes cs sid sd)
 
 sConComponentesAgregadosSi :: [Componente] -> Bool -> Sector -> Sector
 sConComponentesAgregadosSi cs True s = sConComponentesAgregados cs s
@@ -269,42 +232,148 @@ sConComponentesAgregadosSi cs _ s = s
 sConComponentesAgregados :: [Componente] -> Sector -> Sector
 sConComponentesAgregados cs (S sid c2s ts) = S sid (cs++c2s) ts
 
--- asignarTripulanteA :: Tripulante -> [SectorId] -> Nave -> Nave
--- -- Propósito: Incorpora un tripulante a una lista de sectores de la nave. Precondición: Todos los id de la lista existen en la nave.
+asignarTripulanteA :: Tripulante -> [SectorId] -> Nave -> Nave
+-- Propósito: Incorpora un tripulante a una lista de sectores de la nave. Precondición: Todos los id de la lista existen en la nave.
+asignarTripulanteA t [] n = n
+asignarTripulanteA t (sid:sids) n = naveConTAgregadoEnS t sid (asignarTripulanteA t sids n)
 
--- sectoresAsignados :: Tripulante -> Nave -> [SectorId]
--- -- Propósito: Devuelve los sectores en donde aparece un tripulante dado.
+naveConTAgregadoEnS :: Tripulante -> SectorId -> Nave -> Nave
+naveConTAgregadoEnS t sid (N ts) = N (tsConTAgregadoEnST t sid ts)
 
--- tripulantes :: Nave -> [Tripulante]
--- -- Propósito: Devuelve la lista de tripulantes, sin elementos repetidos.
--- tripulantes (N ts) = tripulanteT ts
+tsConTAgregadoEnST :: Tripulante -> SectorId -> Tree Sector -> Tree Sector
+tsConTAgregadoEnST t s EmptyT = EmptyT
+tsConTAgregadoEnST t sid (NodeT s si sd) = NodeT (sConTripulanteAgregadoSi t (sid == sectorIdDe s) s) (tsConTAgregadoEnST t sid si) (tsConTAgregadoEnST t sid sd)
 
--- tripulanteT :: Tree Sector -> [Tripulante]
--- tripulanteT EmptyT =
--- tripulanteT (NodeT s si sd) = 
+sConTripulanteAgregadoSi :: Tripulante -> Bool -> Sector -> Sector
+sConTripulanteAgregadoSi t True (S sid cs ts) = S sid cs (t:ts)
+sConTripulanteAgregadoSi _ _ s = s
 
--- tripulantesDe :: Sector -> [Tripulante]
--- tripulantesDe (S _ _ ts) = ts
+sectoresAsignados :: Tripulante -> Nave -> [SectorId]
+-- Propósito: Devuelve los sectores en donde aparece un tripulante dado.
+sectoresAsignados t (N ts) = sectoresAsignadosT t ts
 
--- -- MANADA DE LOBOS
+sectoresAsignadosT :: Tripulante -> Tree Sector -> [SectorId]
+sectoresAsignadosT t EmptyT = []
+sectoresAsignadosT t (NodeT s si sd) = sectorSiAparece t s ++ (sectoresAsignadosT t si) ++ (sectoresAsignadosT t sd)
 
--- type Presa = String 
--- type Territorio = String 
--- type Nombre = String 
--- data Lobo = Cazador Nombre [Presa] Lobo Lobo Lobo | Explorador Nombre [Territorio] Lobo Lobo | Cría Nombre deriving Show
--- data Manada = M Lobo deriving Show
+sectorSiAparece :: Tripulante -> Sector -> [SectorId]
+sectorSiAparece t (S sid cs ts) = if elem t ts
+                                   then [sid]
+                                   else []
 
--- buenaCaza :: Manada -> Bool
--- -- Propósito: dada una manada, indica si la cantidad de alimento cazado es mayor a la cantidad de crías.
+tripulantes :: Nave -> [Tripulante]
+-- Propósito: Devuelve la lista de tripulantes, sin elementos repetidos.
+tripulantes (N ts) = sinRepetidos (tripulanteT ts)
 
--- elAlfa :: Manada -> (Nombre, Int)
--- -- Propósito: dada una manada, devuelve el nombre del lobo con más presas cazadas, junto con su cantidad de presas. Nota: se considera que los exploradores y crías tienen cero presas cazadas, y que podrían formar parte del resultado si es que no existen cazadores con más de cero presas.
+tripulanteT :: Tree Sector -> [Tripulante]
+tripulanteT EmptyT = []
+tripulanteT (NodeT s si sd) = tripulantesDe s ++ tripulanteT si ++ tripulanteT sd
 
--- losQueExploraron :: Territorio -> Manada -> [Nombre]
--- -- Propósito: dado un territorio y una manada, devuelve los nombres de los exploradores que pasaron por dicho territorio.
+tripulantesDe :: Sector -> [Tripulante]
+tripulantesDe (S _ _ ts) = ts
 
--- exploradoresPorTerritorio :: Manada -> [(Territorio, [Nombre])]
--- -- Propósito: dada una manada, denota la lista de los pares cuyo primer elemento es un territorio y cuyo segundo elemento es la lista de los nombres de los exploradores que exploraron dicho territorio. Los territorios no deben repetirse.
+sinRepetidos :: Eq a => [a] -> [a]
+sinRepetidos [] = []
+sinRepetidos (x:xs) = if elem x xs then sinRepetidos xs else x : sinRepetidos xs
+
+-- MANADA DE LOBOS
+
+type Presa = String 
+type Territorio = String 
+type Nombre = String 
+data Lobo = Cazador Nombre [Presa] Lobo Lobo Lobo | Explorador Nombre [Territorio] Lobo Lobo | Cria Nombre deriving Show
+data Manada = M Lobo deriving Show
+
+m = M l
+l = cz1
+cz1 = Cazador "Facundo" p1 cz2 ex1 ex2
+cz2 = Cazador "Abril" p2 ex3 ex4 cr1
+ex1 = Explorador "Tiara" t1 cr2 cr3
+ex2 = Explorador "Juan" t2 cr4 cr5
+ex3 = Explorador "Claudia" t1 cr6 cr7
+ex4 = Explorador "Jorge" t2 cr8 cr9
+cr1 = Cria "Franco"
+cr2 = Cria "Catalina"
+cr3 = Cria "Aldana"
+cr4 = Cria "Ezequiel"
+cr5 = Cria "Ludmila"
+cr6 = Cria "Pedro"
+cr7 = Cria "Melisa"
+cr8 = Cria "Camila"
+cr9 = Cria "Tiago"
+p1 = ["Cocodrilo", "Leon", "Tigre", "Leopardo"]
+p2 = ["Conejo", "Liebre"]
+t1 = ["Pataia", "Chalten", "Tacul"]
+t2 = ["Calafate", "Chalten", "Traful"]
+
+buenaCaza :: Manada -> Bool
+-- Propósito: dada una manada, indica si la cantidad de alimento cazado es mayor a la cantidad de crías.
+buenaCaza (M l) = cantPresas l > cantCrias l
+
+cantPresas :: Lobo -> Int
+cantPresas (Cazador _ ps l1 l2 l3) = longitud ps + cantPresas l1 + cantPresas l2 + cantPresas l3 
+cantPresas (Explorador _ _ l1 l2) = cantPresas l1 + cantPresas l2
+cantPresas (Cria _) = 0
+
+cantCrias :: Lobo -> Int
+cantCrias (Cazador _ _ l1 l2 l3) = cantCrias l1 + cantCrias l2 + cantCrias l3
+cantCrias (Explorador _ _ l1 l2) = cantCrias l1 + cantCrias l2
+cantCrias (Cria _) = 1
+
+esCria :: Lobo -> Bool
+esCria (Cria _) = True
+esCria _ = False
+
+longitud :: [a] -> Int
+longitud [] = 0
+longitud (x:xs) = 1 + longitud xs
+
+unoSi :: Bool -> Int
+unoSi True = 1
+unoSi False = 0
+
+elAlfa :: Manada -> (Nombre, Int)
+-- Propósito: dada una manada, devuelve el nombre del lobo con más presas cazadas, junto con su cantidad de presas. Nota: se considera que los exploradores y crías tienen cero presas cazadas, y que podrían formar parte del resultado si es que no existen cazadores con más de cero presas.
+elAlfa (M l) = elAlfaL l
+
+elAlfaL :: Lobo -> (Nombre, Int)
+elAlfaL l = (nombreDe (loboConMasPresas l), cantPresasDe (loboConMasPresas l))
+
+nombreDe :: Lobo -> String
+nombreDe (Cazador n _ _ _ _) = n
+nombreDe (Explorador n _ _ _) = n
+nombreDe (Cria n) = n
+
+cantPresasDe :: Lobo -> Int
+cantPresasDe (Cazador _ ps _ _ _) = longitud ps
+cantPresasDe _ = 0
+
+loboConMasPresas :: Lobo -> Lobo
+loboConMasPresas (Cazador n ps l1 l2 l3) = let elQueTieneMasPresas = loboConMasPresasEntre (loboConMasPresas l1) (loboConMasPresasEntre (loboConMasPresas l2) (loboConMasPresas l3))
+                                            in if longitud ps > cantPresasDe elQueTieneMasPresas
+                                                then Cazador n ps l1 l2 l3
+                                                else elQueTieneMasPresas
+
+loboConMasPresas (Explorador _ _ l1 l2) = loboConMasPresasEntre (loboConMasPresas l1) (loboConMasPresas l2)
+loboConMasPresas (Cria n) = Cria n
+
+loboConMasPresasEntre :: Lobo -> Lobo -> Lobo
+loboConMasPresasEntre l1 l2 = if cantPresasDe l1 > cantPresasDe l2
+                               then l1
+                               else l2
+
+losQueExploraron :: Territorio -> Manada -> [Nombre]
+-- Propósito: dado un territorio y una manada, devuelve los nombres de los exploradores que pasaron por dicho territorio.
+losQueExploraron t (M l) = losQueExploraronL t l
+
+losQueExploraronL :: Territorio -> Lobo -> [Nombre]
+losQueExploraronL t (Cazador _ _ l1 l2 l3) = losQueExploraronL t l1 ++ losQueExploraronL t l2 ++ losQueExploraronL t l3
+losQueExploraronL t (Explorador n ts l1 l2) = singularSi n (elem t ts) ++ losQueExploraronL t l1 ++ losQueExploraronL t l2
+losQueExploraronL _ (Cria _) = []
+
+exploradoresPorTerritorio :: Manada -> [(Territorio, [Nombre])]
+-- Propósito: dada una manada, denota la lista de los pares cuyo primer elemento es un territorio y cuyo segundo elemento es la lista de los nombres de los exploradores que exploraron dicho territorio. Los territorios no deben repetirse.
+exploradoresPorTerritorio (M l) = asociarPorTerritorio  
 
 -- cazadoresSuperioresDe :: Nombre -> Manada -> [Nombre]
 -- -- Propósito: dado el nombre de un lobo y una manada, indica el nombre de todos los cazadores que tienen como subordinado al lobo dado (puede ser un subordinado directo, o el subordinado de un subordinado). Precondición: hay un lobo con dicho nombre y es único.
