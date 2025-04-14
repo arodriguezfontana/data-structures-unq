@@ -284,41 +284,19 @@ type Nombre = String
 data Lobo = Cazador Nombre [Presa] Lobo Lobo Lobo | Explorador Nombre [Territorio] Lobo Lobo | Cria Nombre deriving Show
 data Manada = M Lobo deriving Show
 
-m = M l
-l = cz1
-cz1 = Cazador "Facundo" p1 cz2 ex1 ex2
-cz2 = Cazador "Abril" p2 ex3 ex4 cr1
-ex1 = Explorador "Tiara" t1 cr2 cr3
-ex2 = Explorador "Juan" t2 cr4 cr5
-ex3 = Explorador "Claudia" t1 cr6 cr7
-ex4 = Explorador "Jorge" t2 cr8 cr9
-cr1 = Cria "Franco"
-cr2 = Cria "Catalina"
-cr3 = Cria "Aldana"
-cr4 = Cria "Ezequiel"
-cr5 = Cria "Ludmila"
-cr6 = Cria "Pedro"
-cr7 = Cria "Melisa"
-cr8 = Cria "Camila"
-cr9 = Cria "Tiago"
-p1 = ["Cocodrilo", "Leon", "Tigre", "Leopardo"]
-p2 = ["Conejo", "Liebre"]
-t1 = ["Pataia", "Chalten", "Tacul"]
-t2 = ["Calafate", "Chalten", "Traful"]
-
 buenaCaza :: Manada -> Bool
 -- Propósito: dada una manada, indica si la cantidad de alimento cazado es mayor a la cantidad de crías.
 buenaCaza (M l) = cantPresas l > cantCrias l
 
 cantPresas :: Lobo -> Int
-cantPresas (Cazador _ ps l1 l2 l3) = longitud ps + cantPresas l1 + cantPresas l2 + cantPresas l3 
-cantPresas (Explorador _ _ l1 l2) = cantPresas l1 + cantPresas l2
 cantPresas (Cria _) = 0
+cantPresas (Explorador _ _ l1 l2) = cantPresas l1 + cantPresas l2
+cantPresas (Cazador _ ps l1 l2 l3) = longitud ps + cantPresas l1 + cantPresas l2 + cantPresas l3 
 
 cantCrias :: Lobo -> Int
-cantCrias (Cazador _ _ l1 l2 l3) = cantCrias l1 + cantCrias l2 + cantCrias l3
-cantCrias (Explorador _ _ l1 l2) = cantCrias l1 + cantCrias l2
 cantCrias (Cria _) = 1
+cantCrias (Explorador _ _ l1 l2) = cantCrias l1 + cantCrias l2
+cantCrias (Cazador _ _ l1 l2 l3) = cantCrias l1 + cantCrias l2 + cantCrias l3
 
 esCria :: Lobo -> Bool
 esCria (Cria _) = True
@@ -340,22 +318,22 @@ elAlfaL :: Lobo -> (Nombre, Int)
 elAlfaL l = (nombreDe (loboConMasPresas l), cantPresasDe (loboConMasPresas l))
 
 nombreDe :: Lobo -> String
-nombreDe (Cazador n _ _ _ _) = n
-nombreDe (Explorador n _ _ _) = n
 nombreDe (Cria n) = n
+nombreDe (Explorador n _ _ _) = n
+nombreDe (Cazador n _ _ _ _) = n
 
 cantPresasDe :: Lobo -> Int
 cantPresasDe (Cazador _ ps _ _ _) = longitud ps
 cantPresasDe _ = 0
 
 loboConMasPresas :: Lobo -> Lobo
+loboConMasPresas (Cria n) = Cria n
+loboConMasPresas (Explorador _ _ l1 l2) = loboConMasPresasEntre (loboConMasPresas l1) (loboConMasPresas l2)
 loboConMasPresas (Cazador n ps l1 l2 l3) = let elQueTieneMasPresas = loboConMasPresasEntre (loboConMasPresas l1) (loboConMasPresasEntre (loboConMasPresas l2) (loboConMasPresas l3))
                                             in if longitud ps > cantPresasDe elQueTieneMasPresas
                                                 then Cazador n ps l1 l2 l3
                                                 else elQueTieneMasPresas
 
-loboConMasPresas (Explorador _ _ l1 l2) = loboConMasPresasEntre (loboConMasPresas l1) (loboConMasPresas l2)
-loboConMasPresas (Cria n) = Cria n
 
 loboConMasPresasEntre :: Lobo -> Lobo -> Lobo
 loboConMasPresasEntre l1 l2 = if cantPresasDe l1 > cantPresasDe l2
@@ -373,7 +351,23 @@ losQueExploraronL _ (Cria _) = []
 
 exploradoresPorTerritorio :: Manada -> [(Territorio, [Nombre])]
 -- Propósito: dada una manada, denota la lista de los pares cuyo primer elemento es un territorio y cuyo segundo elemento es la lista de los nombres de los exploradores que exploraron dicho territorio. Los territorios no deben repetirse.
-exploradoresPorTerritorio (M l) = asociarPorTerritorio  
+exploradoresPorTerritorio m = asociarPorTerritorio (territorios m) m
+
+asociarPorTerritorio :: [Territorio] -> Manada -> -> [(Territorio, [Nombre])]
+asociarPorTerritorio [] _ = []
+asociarPorTerritorio (t:ts) m = (t, losQueExploraron t m) : asociarPorTerritorio ts m
+
+territorios :: Manada -> [Territorio]
+territorios (M l) = sinRepetidos (territoriosL l)
+
+territoriosL :: Lobo -> [Territorio]
+territoriosL (Cria _) = []
+territoriosL (Explorador n ts l1 l2) = ts ++ territoriosL l1 ++ territoriosL l2
+territoriosL (Cazador n ps l1 l2 l3) = territoriosL l1 ++ territoriosL l2 ++ territoriosL l3
+
+sinRepetidos :: Eq a => [a] -> [a]
+sinRepetidos [] = []
+sinRepetidos (x:xs) = if elem x xs then sinRepetidos xs else x : sinRepetidos xs
 
 -- cazadoresSuperioresDe :: Nombre -> Manada -> [Nombre]
 -- -- Propósito: dado el nombre de un lobo y una manada, indica el nombre de todos los cazadores que tienen como subordinado al lobo dado (puede ser un subordinado directo, o el subordinado de un subordinado). Precondición: hay un lobo con dicho nombre y es único.
