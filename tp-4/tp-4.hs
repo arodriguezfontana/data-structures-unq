@@ -28,7 +28,7 @@ sonMismoIngrediente (Aceitunas _) (Aceitunas _) = True
 sonMismoIngrediente _ _ = False
 
 tieneSoloSalsaYQueso :: Pizza -> Bool
--- Dice si una pizza tiene solamente salsa y queso (o sea, no tiene de otros ingredientes. En particular, la prepizza, al no tener ningún ingrediente, debería dar verdadero.).
+-- Dice si una pizza tiene solamente salsa y queso (o sea, no tiene de otros ingredientes. En particular, la prepizza, al no tener ningún ingrediente, debería dar verdadero).
 tieneSoloSalsaYQueso Prepizza = True
 tieneSoloSalsaYQueso (Capa i p) = esSalsaOQueso i && tieneSoloSalsaYQueso p
 
