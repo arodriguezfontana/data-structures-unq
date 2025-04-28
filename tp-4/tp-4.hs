@@ -105,14 +105,11 @@ esIzq _ = False
 caminoAlTesoro :: Mapa -> [Dir]
 -- Indica el camino al tesoro. Precondición: existe un tesoro y es único.
 caminoAlTesoro (Fin c) = []
-caminoAlTesoro (Bifurcacion c mi md) = if hayTesoroEnCofre c
+caminoAlTesoro (Bifurcacion c mi md) = if hayTesoroEnCofre c 
                                         then []
-                                        else caminoArmado mi md
-                                        
-caminoArmado :: Mapa -> Mapa -> [Dir]
-caminoArmado mi md = if hayTesoro mi
-                      then Izq : (caminoAlTesoro mi) 
-                      else Der : (caminoAlTesoro md)
+                                        else if hayTesoro mi
+                                             then Izq : caminoAlTesoro mi
+                                             else Der : caminoAlTesoro md
 
 caminoDeLaRamaMasLarga :: Mapa -> [Dir]
 -- Indica el camino de la rama más larga.
