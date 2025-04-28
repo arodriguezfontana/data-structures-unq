@@ -275,6 +275,7 @@ cantQueTrabajanEnR ps [] = 0
 cantQueTrabajanEnR ps (r:rs) = unoSi (perteneceAAlguno r ps) + cantQueTrabajanEnR ps rs
 
 asignadosPorProyecto :: Empresa -> [(Proyecto, Int)]
+-- Devuelve una lista de pares que representa a los proyectos (sin repetir) junto con su cantidad de personas involucradas.
 asignadosPorProyecto (Em rs) = asignadosPorProyectoR rs
 
 asignadosPorProyectoR :: [Rol] -> [(Proyecto, Int)]
