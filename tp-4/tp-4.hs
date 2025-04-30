@@ -312,30 +312,18 @@ elAlfa :: Manada -> (Nombre, Int)
 elAlfa (M l) = elAlfaL l
 
 elAlfaL :: Lobo -> (Nombre, Int)
-elAlfaL l = (nombreDe (loboConMasPresas l), cantPresasDe (loboConMasPresas l))
+elAlfaL (Cria n) = (n, 0)
+elAlfaL (Explorador n _ l1 l2) = elAlfaLS [elAlfaL l1, elAlfaL l2, (n, 0)]
+elAlfaL (Cazador n ps l1 l2 l3) = elAlfaLS [(n, longitud ps), elAlfaL l1, elAlfaL l2, leAlfaL l3]
 
-nombreDe :: Lobo -> String
-nombreDe (Cria n) = n
-nombreDe (Explorador n _ _ _) = n
-nombreDe (Cazador n _ _ _ _) = n
+elAlfaLS :: [(Nombre, Int)] -> (Nombre, Int)
+elAlfaLS (ni:[]) = nc
+elAlfaLS (ni: nis) = elMásAlfa ni (elAlfaLS nis)
 
-cantPresasDe :: Lobo -> Int
-cantPresasDe (Cazador _ ps _ _ _) = longitud ps
-cantPresasDe _ = 0
-
-loboConMasPresas :: Lobo -> Lobo
-loboConMasPresas (Cria n) = Cria n
-loboConMasPresas (Explorador _ _ l1 l2) = loboConMasPresasEntre (loboConMasPresas l1) (loboConMasPresas l2)
-loboConMasPresas (Cazador n ps l1 l2 l3) = let elQueTieneMasPresas = loboConMasPresasEntre (loboConMasPresas l1) (loboConMasPresasEntre (loboConMasPresas l2) (loboConMasPresas l3))
-                                            in if longitud ps > cantPresasDe elQueTieneMasPresas
-                                                then Cazador n ps l1 l2 l3
-                                                else elQueTieneMasPresas
-
-
-loboConMasPresasEntre :: Lobo -> Lobo -> Lobo
-loboConMasPresasEntre l1 l2 = if cantPresasDe l1 > cantPresasDe l2
-                               then l1
-                               else l2
+elMásAlfa :: (Nombre, Int) -> (Nombre, Int) -> (Nombre, Int)
+elMásAlfa (n1, i1) (n2, i2) = if i1 > i2
+                                then (n1, i1)
+                                else (n2, i2)
 
 losQueExploraron :: Territorio -> Manada -> [Nombre]
 -- Propósito: dado un territorio y una manada, devuelve los nombres de los exploradores que pasaron por dicho territorio.
