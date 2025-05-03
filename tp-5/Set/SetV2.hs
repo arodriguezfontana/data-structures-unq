@@ -1,5 +1,5 @@
-module SetV2(SetV2, emptyS, addS, belongs, sizeS, removeS, unionS, setToList) where
--- Admite repetidos y guarda en la estructura la cantidad de elementos.
+module SetV2(Set, emptyS, addS, belongs, sizeS, removeS, unionS, setToList) where
+-- Una lista que admite repetidos.
 
 data Set a = S [a]
 -- Inv. Rep.
@@ -29,12 +29,12 @@ removeS x (S xs) = if elem x xs
                       else S xs
 
 unionS :: Eq a => Set a -> Set a -> Set a -- O(1)
--- Dados dos conjuntos devuelve un conjunto con todos los elementos de ambos. conjuntos.
-unionS (S xs c) (S ys c2) = S (xs++ys)
+-- Dados dos conjuntos devuelve un conjunto con todos los elementos de ambos conjuntos.
+unionS (S xs) (S ys) = S (xs++ys)
 
-setToList :: Eq a => Set a -> [a] -- O(1)
+setToList :: Eq a => Set a -> [a] -- O(n) sinedo n la longitud de xs.
 -- Dado un conjunto devuelve una lista con todos los elementos distintos del conjunto.
-setToList (S xs c) = sinRepetidos xs
+setToList (S xs) = sinRepetidos xs
 
 -- SUBTAREAS
 
@@ -44,8 +44,8 @@ remove x (y:ys) = if x==y
                     then remove x ys
                     else y : (remove x ys)
 
-union :: Eq a => [a] -> [a] -> [a] -- O(n*m) siendo n la longitud de ys y m la longitud de xs. Por cada elemento de xs se recorre ys. 
-union [] ys = ys
-union (x:xs) ys = if elem x ys
-                    then union xs ys
-                    else x : (union xs ys)
+sinRepetidos :: Eq a => [a] -> [a] -- O(n^2) siendo n la longitud de xs. Por cada elemento de xs hago elem O(n).
+sinRepetidos []     = []
+sinRepetidos (x:xs) = if elem x xs
+                        then sinRepetidos xs
+                        else x : sinRepetidos xs

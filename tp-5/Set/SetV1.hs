@@ -1,9 +1,9 @@
-module Set(Set, emptyS, addS, belongs, sizeS, removeS, unionS, setToList) where
--- No tiene repetidos y guarda en la estructura la cantidad de elementos.
+module SetV1(Set, emptyS, addS, belongs, sizeS, removeS, unionS, setToList) where
+-- Una lista que no admite repetidos y guarda en la estructura la cantidad de elementos.
 
 data Set a = S [a] Int
 -- Inv. Rep.
--- Sea (S xs c), un set, xs los elementos del mismo y c, la cantidad de elementos.
+-- Sea (S xs c) un set, xs los elementos del mismo y c la cantidad de elementos.
 -- * xs no puede contener elementos repetidos.
 -- * c es la cantidad de elementos de xs.
 
@@ -45,8 +45,8 @@ setToList (S xs c) = xs
 remove :: Eq a => a -> [a] -> [a] -- O(n) sendo n la longitud de ys.
 remove _ [] = []
 remove x (y:ys) = if x==y
-                    then ys
-                    else y:(remove x ys)
+                    then remove x ys
+                    else y : (remove x ys)
 
 union :: Eq a => [a] -> [a] -> [a] -- O(n*m) siendo n la longitud de ys y m la longitud de xs. Por cada elemento de xs se recorre ys. 
 union [] ys = ys
