@@ -15,7 +15,6 @@ queueToList q = if isEmptyQ q
 
 unionQ :: Queue a -> Queue a -> Queue a
 -- Inserta todos los elementos de la segunda cola en la primera.
-unionQ 
-
-q = enqueue 1 (enqueue 2 (enqueue 3 (enqueue 4 emptyQ)))
-q1 = enqueue 5 (enqueue 6 emptyQ)
+unionQ q1 q2 = if isEmptyQ q1
+                then q2
+                else enqueue (firstQ q1) (unionQ (dequeue q2) q2)
