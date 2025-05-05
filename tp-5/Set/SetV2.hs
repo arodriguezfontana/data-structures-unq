@@ -1,5 +1,4 @@
 module SetV2(Set, emptyS, addS, belongs, sizeS, removeS, unionS, setToList) where
--- Una lista que admite repetidos.
 
 data Set a = S [a]
 -- Inv. Rep.

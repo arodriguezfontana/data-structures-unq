@@ -1,5 +1,4 @@
 module SetV1(Set, emptyS, addS, belongs, sizeS, removeS, unionS, setToList) where
--- Una lista que no admite repetidos y guarda en la estructura la cantidad de elementos.
 
 data Set a = S [a] Int
 -- Inv. Rep.

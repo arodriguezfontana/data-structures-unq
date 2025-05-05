@@ -1,5 +1,4 @@
 module QueueV1(Queue, emptyQ, isEmptyQ, enqueue, firstQ, dequeue) where
--- Una lista donde el elemento que se agrega primero es el primero en salir.
 
 data Queue a = Q [a]
 -- Inv. Rep.
