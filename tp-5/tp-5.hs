@@ -4,7 +4,7 @@ head' (x:xs) = x
 
 -- O(1)
 sumar :: Int -> Int 
-sumar x = x + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1
+sumar x = x + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1
 
 -- O(n) siendo n el numero dado.
 factorial :: Int -> Int 
