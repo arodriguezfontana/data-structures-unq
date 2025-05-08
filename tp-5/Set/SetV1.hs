@@ -44,7 +44,7 @@ setToList (S xs c) = xs
 remove :: Eq a => a -> [a] -> [a] -- O(n) sendo n la longitud de ys.
 remove _ [] = []
 remove x (y:ys) = if x==y
-                    then remove x ys
+                    then ys
                     else y : (remove x ys)
 
 union :: Eq a => [a] -> [a] -> [a] -- O(n*m) siendo n la longitud de ys y m la longitud de xs. Por cada elemento de xs se recorre ys. 
