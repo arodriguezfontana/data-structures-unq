@@ -1,4 +1,4 @@
-module MapV1(Map, emptyPQ, isEmptyPQ, insertPQ, findMinPQ, deleteMinPQ) where
+module MapV1(Map, emptyM, assocM, lookupM, deleteM, keys) where
 
 data Map k v = M [(k,v)]
 -- Inv. Rep.
@@ -33,7 +33,7 @@ assoc :: Eq k => k -> v -> [(k,v)] -> [(k,v)]
 assoc k v [] = [(k,v)]
 assoc k v ((kt,vt):kvs) = if k == kt
                             then (kt,v) : kvs
-                            else (ky,vt) : assoc k v kvs
+                            else (kt,vt) : assoc k v kvs
 
 lookup :: Eq k => k -> [(k,v)] -> Maybe v
 lookup _ [] = Nothing
