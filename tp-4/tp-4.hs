@@ -330,9 +330,9 @@ losQueExploraron :: Territorio -> Manada -> [Nombre]
 losQueExploraron t (M l) = losQueExploraronL t l
 
 losQueExploraronL :: Territorio -> Lobo -> [Nombre]
+losQueExploraronL _ (Cria _) = []
 losQueExploraronL t (Cazador _ _ l1 l2 l3) = losQueExploraronL t l1 ++ losQueExploraronL t l2 ++ losQueExploraronL t l3
 losQueExploraronL t (Explorador n ts l1 l2) = singularSi n (elem t ts) ++ losQueExploraronL t l1 ++ losQueExploraronL t l2
-losQueExploraronL _ (Cria _) = []
 
 exploradoresPorTerritorio :: Manada -> [(Territorio, [Nombre])]
 -- Propósito: dada una manada, denota la lista de los pares cuyo primer elemento es un territorio y cuyo segundo elemento es la lista de los nombres de los exploradores que exploraron dicho territorio. Los territorios no deben repetirse.
@@ -347,12 +347,26 @@ territorios (M l) = sinRepetidos (territoriosL l)
 
 territoriosL :: Lobo -> [Territorio]
 territoriosL (Cria _) = []
-territoriosL (Explorador n ts l1 l2) = ts ++ territoriosL l1 ++ territoriosL l2
 territoriosL (Cazador n ps l1 l2 l3) = territoriosL l1 ++ territoriosL l2 ++ territoriosL l3
+territoriosL (Explorador n ts l1 l2) = ts ++ territoriosL l1 ++ territoriosL l2
 
 sinRepetidos :: Eq a => [a] -> [a]
 sinRepetidos [] = []
 sinRepetidos (x:xs) = if elem x xs then sinRepetidos xs else x : sinRepetidos xs
 
--- cazadoresSuperioresDe :: Nombre -> Manada -> [Nombre]
--- -- Propósito: dado el nombre de un lobo y una manada, indica el nombre de todos los cazadores que tienen como subordinado al lobo dado (puede ser un subordinado directo, o el subordinado de un subordinado). Precondición: hay un lobo con dicho nombre y es único.
+cazadoresSuperioresDe :: Nombre -> Manada -> [Nombre]
+-- Propósito: dado el nombre de un lobo y una manada, indica el nombre de todos los cazadores que tienen como subordinado al lobo dado (puede ser un subordinado directo, o el subordinado de un subordinado). Precondición: hay un lobo con dicho nombre y es único.
+cazadoresSuperioresDe n m = cConSubordinadoA n m
+
+cConSubordinadoA :: Nombre -> Lobo -> [Nombre]
+cConSubordinadoA n (Cria _) = []
+cConSubordinadoA n (Explorador n2 ts l1 l2) = if n == n2
+                                                  then []
+                                                  else cConSubordinadoA n l1 ++ cConSubordinadoA n l2 
+cConSubordinadoA n (Cazador n2 ps l1 l2 l3) = let c1 = cConSubordinadoA n l1
+                                                  c2 = cConSubordinadoA n l2
+                                                  c3 = cConSubordinadoA n l3
+                                             in if n == n2
+                                                  then []
+                                                  else n2 : (c1 ++ c2 ++ c3)
+                                                       
