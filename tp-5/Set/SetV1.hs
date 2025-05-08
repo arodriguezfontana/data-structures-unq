@@ -2,7 +2,7 @@ module SetV1(Set, emptyS, addS, belongs, sizeS, removeS, unionS, setToList) wher
 
 data Set a = S [a] Int
 -- Inv. Rep.
--- Sea (S xs c) un set, xs los elementos del mismo y c la cantidad de elementos.
+-- Sea (S xs c) un set, xs una lista con sus elementos y c un numero.
 -- * xs no puede contener elementos repetidos.
 -- * c es la cantidad de elementos de xs.
 

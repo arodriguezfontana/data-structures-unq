@@ -3,7 +3,7 @@ module QueueV2(Queue, emptyQ, isEmptyQ, enqueue, firstQ, dequeue) where
 data Queue a = Q [a]
 -- Inv. Rep.
 -- Sea (Q xs) una cola y xs los elementos de la misma.
--- * En xs los elementos entran por el inicio de la lista y salen por el final.
+-- * En xs los elementos se agregan por el inicio de la lista y salen por el final.
 
 emptyQ :: Queue a -- O(1)
 -- Crea una cola vacía.

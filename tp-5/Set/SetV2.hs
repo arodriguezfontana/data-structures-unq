@@ -2,7 +2,7 @@ module SetV2(Set, emptyS, addS, belongs, sizeS, removeS, unionS, setToList) wher
 
 data Set a = S [a]
 -- Inv. Rep.
--- Sea (S xs), un set y xs los elementos del mismo.
+-- Sea (S xs), un set y xs una lista con sus elementos.
 -- * No hay invariantes.
 
 emptyS :: Set a -- O(1)
