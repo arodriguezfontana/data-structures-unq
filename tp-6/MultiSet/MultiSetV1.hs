@@ -4,7 +4,6 @@ import MapV1
 
 data MultiSet a = MS (Map a Int)
 -- Sea (M mp) un multiset y mp un map:
--- * Los valores asociados a cada clave de mp representan las apariciones de cada elemento.
 
 emptyMS :: MultiSet a
 -- Propósito: denota un multiconjunto vacío.
