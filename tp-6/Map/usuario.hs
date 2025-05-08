@@ -1,4 +1,6 @@
 import MapV1
+-- import MapV2
+-- import MapV3
 
 valuesM :: Eq k => Map k v -> [Maybe v]
 -- Propósito: obtiene los valores asociados a cada clave del map.
@@ -51,3 +53,9 @@ mergeMapsWithKeys ::  Eq k => [k] -> Map k v -> Map k v -> Map k v
 -- Precondición La lista de claves deben claves que pertenecen al primer map dado.
 mergeMapsWithKeys [] _ m2 = m2
 mergeMapsWithKeys (k:ks) m1 m2 = assocM k (fromJust (lookupM k m1)) (mergeMapsWithKeys ks m1 m2)
+
+-- indexar :: [a] -> Map Int a
+-- -- Propósito: dada una lista de elementos construye un map que relaciona cada elemento con su posición en la lista.
+
+-- ocurrencias :: String -> Map Char Int
+-- -- Propósito: dado un string, devuelve un map donde las claves son los caracteres que aparecen en el string, y los valores la cantidad de veces que aparecen en el mismo.
