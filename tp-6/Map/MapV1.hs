@@ -37,13 +37,13 @@ assoc k v ((kt,vt):kvs) = if k == kt
 
 lookup :: Eq k => k -> [(k,v)] -> Maybe v
 lookup _ [] = Nothing
-lookup k ((kt,vt):kvs) =  if k == kt
+lookup k ((kt,vt):kvs) = if k == kt
                             then Just vt
                             else lookup k kvs
 
 delete :: Eq k => k -> [(k,v)] -> [(k,v)]
 delete _ [] = []
-delete k ((kt,vt):kvs) =  if k == kt
+delete k ((kt,vt):kvs) = if k == kt
                             then delete k kvs
                             else (kt,vt) : delete k kvs
 
