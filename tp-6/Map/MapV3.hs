@@ -1,4 +1,4 @@
-module MapV3(Map, emptyPQ, isEmptyPQ, insertPQ, findMinPQ, deleteMinPQ) where
+module MapV3(Map, emptyM, assocM, lookupM, deleteM, keys) where
 
 data Map k v = M [k] [v]
 -- Inv. Rep.
