@@ -11,4 +11,3 @@ int cantidadDePokemon(Entrenador e);
 int cantidadDePokemonDe(TipoDePokemon tipo, Entrenador e);
 Pokemon pokemonNro(int i, Entrenador e);
 bool leGanaATodos(Entrenador e1, Entrenador e2);
-void ShowEntrenador(Entrenador e);

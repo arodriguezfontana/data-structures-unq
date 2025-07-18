@@ -7,29 +7,22 @@ data Map k v = M [k] [v]
 -- * Sea i un numero natural, cada clave de ks ubicada en la posición i, esta asociada al valor en la misma posición en vs.
 -- * Sea i un numero natural, Cada valor de kvs ubicado en la posición i, esta asociada a la clave en la misma posición en ks.
 
-emptyM :: Map k v -- O(1)
--- Propósito: devuelve un map vacío.
+emptyM :: Map k v 
 emptyM = M [] []
 
-assocM :: Eq k => k -> v -> Map k v -> Map k v -- O(1)
--- Propósito: agrega una asociación clave-valor al map.
+assocM :: Eq k => k -> v -> Map k v -> Map k v 
 assocM k v (M ks vs) = M (k:ks) (v:vs)
 
-lookupM :: Eq k => k -> Map k v -> Maybe v -- O(n) siendo n la longitud de ks/vs ya que por invariante tienen la misma longitud.
--- Propósito: encuentra un valor dado una clave.
+lookupM :: Eq k => k -> Map k v -> Maybe v 
 lookupM k (M ks vs) = valorEnPosicionDeClave k ks vs
 
-deleteM :: Eq k => k -> Map k v -> Map k v -- O(n) siendo n la longitud de ks/vs ya que por invariante tienen la misma longitud.
--- Propósito: borra una asociación dada una clave.
+deleteM :: Eq k => k -> Map k v -> Map k v 
 deleteM k (M ks vs) = M (borrarClave k ks) (borrarValor k ks vs)
 
-keys :: Map k v -> [k] -- O(1)
--- Propósito: devuelve las claves del map.
+keys :: Map k v -> [k] 
 keys (M ks _) = ks
 
--- SUBTAREA
-
-valorEnPosicionDeClave :: Eq k => k -> [k] -> [v] -> Maybe v -- O(n) siendo n la longitud de ks/vs ya que por invariante tienen la misma longitud.
+valorEnPosicionDeClave :: Eq k => k -> [k] -> [v] -> Maybe v 
 valorEnPosicionDeClave _ ks [] = Nothing
 valorEnPosicionDeClave _ [] vs = Nothing 
 valorEnPosicionDeClave k (k2:ks) (v:vs) = if k == k2 

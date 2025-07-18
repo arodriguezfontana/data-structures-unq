@@ -11,4 +11,6 @@ void crecer(Persona p);
 void cambioDeNombre(string nombre, Persona p);
 bool esMayorQueLaOtra(Persona p1, Persona p2);
 Persona laQueEsMayor(Persona p1, Persona p2);
-void ShowPersona(Persona p);
+void liberarP(Persona p);
+void asignarMascota(Persona p);
+Mascota mascotaP(Persona p);

@@ -39,11 +39,3 @@ bool superaA(Pokemon p1, Pokemon p2)
             p1->tipo == 'fuego' && p2->tipo == 'planta' ||
             p1->tipo == 'planta' && p2->tipo == 'agua');
 }
-
-void ShowPokemon(Pokemon p)
-{
-    cout << "Pokemon {" << endl;
-    cout << " tipo -> " << p->tipo << endl;
-    cout << " vida -> " << p->vida << endl;
-    cout << "}" << endl;
-}

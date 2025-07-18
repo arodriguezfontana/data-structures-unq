@@ -6,48 +6,39 @@ data Set a = S [a] Int
 -- * xs no puede contener elementos repetidos.
 -- * c es la cantidad de elementos de xs.
 
-emptyS :: Set a -- O(1)
--- Crea un conjunto vacío.
+emptyS :: Set a 
 emptyS = S [] 0
 
-addS :: Eq a => a -> Set a -> Set a -- O(n) siendo n la longitud de xs.
--- Dados un elemento y un conjunto, agrega el elemento al conjunto.
+addS :: Eq a => a -> Set a -> Set a 
 addS x (S xs c) = if elem x xs
                    then S xs c
                    else S (x:xs) (c+1)
 
-belongs :: Eq a => a -> Set a -> Bool -- O(n) siendo n la longitud de xs.
--- Dados un elemento y un conjunto indica si el elemento pertenece al conjunto.
+belongs :: Eq a => a -> Set a -> Bool 
 belongs x (S xs c) = elem x xs
 
-sizeS :: Eq a => Set a -> Int -- O(1)
--- Devuelve la cantidad de elementos distintos de un conjunto.
+sizeS :: Eq a => Set a -> Int 
 sizeS (S _ c) = c
 
-removeS :: Eq a => a -> Set a -> Set a -- O(n) siendo n la longitud de xs. O(n) + O(n) = O(n).
--- Borra un elemento del conjunto.
+removeS :: Eq a => a -> Set a -> Set a 
 removeS x (S xs c) = if elem x xs
                       then S (remove x xs) (c-1)
                       else S xs c
 
-unionS :: Eq a => Set a -> Set a -> Set a -- O(n*m) siendo n la longitud de ys y m la longitud de xs. O(n*m) + O(n*m) = O(n*m).
--- Dados dos conjuntos devuelve un conjunto con todos los elementos de ambos. conjuntos.
+unionS :: Eq a => Set a -> Set a -> Set a -- O(n*m)
 unionS (S xs c) (S ys c2) = let newList = union xs ys
                              in S newList (length newList) 
 
-setToList :: Eq a => Set a -> [a] -- O(1)
--- Dado un conjunto devuelve una lista con todos los elementos distintos del conjunto.
+setToList :: Eq a => Set a -> [a] 
 setToList (S xs c) = xs
 
--- SUBTAREAS
-
-remove :: Eq a => a -> [a] -> [a] -- O(n) sendo n la longitud de ys.
+remove :: Eq a => a -> [a] -> [a] 
 remove _ [] = []
 remove x (y:ys) = if x==y
                     then ys
                     else y : (remove x ys)
 
-union :: Eq a => [a] -> [a] -> [a] -- O(n*m) siendo n la longitud de ys y m la longitud de xs. Por cada elemento de xs se recorre ys. 
+union :: Eq a => [a] -> [a] -> [a]
 union [] ys = ys
 union (x:xs) ys = if elem x ys
                     then union xs ys

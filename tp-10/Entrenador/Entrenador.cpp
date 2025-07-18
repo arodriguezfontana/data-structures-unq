@@ -6,7 +6,7 @@ using namespace std;
 struct EntrenadorSt
 {
     string nombre;
-    Pokemon* pokemons; // pokemons es un puntero a un array de punteros a pokemon. Un array dinámico de punteros se representa con un puntero doble.
+    Pokemon* pokemons;
     int cantPokemons;
 };
 
@@ -73,13 +73,4 @@ bool leGanaATodos(Entrenador e1, Entrenador e2)
       i++  
     }
     return false;
-}
-
-void ShowEntrenador(Entrenador e)
-{
-    cout << "Entrenador {" << endl;
-    cout << " nombre -> " << e->nombre << endl;
-    cout << " pokemons -> " << e->pokemons << endl;
-    cout << " cantPokemons -> " << e->cantPokemons << endl;
-    cout << "}" << endl;
 }

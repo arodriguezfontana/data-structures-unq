@@ -6,6 +6,8 @@ struct PersonaSt
 {
     string nombre;
     int edad;
+    Mascota mascota;
+    int cantMascotas; 
 };
 typedef PersonaSt* Persona;
 
@@ -54,10 +56,34 @@ Persona laQueEsMayor(Persona p1, Persona p2)
     }
 }
 
-void ShowPersona(Persona p)
-{
-    cout << "Persona {" << endl;
-    cout << " nombre -> " << p->nombre << endl;
-    cout << " edad -> " << p->edad << endl;
-    cout << "}" << endl;
+void liberarP(Persona p) {
+    delete p;
+}
+
+void asignarMascota(Persona p, Mascota mascota) {
+    p->mascota = mascota;
+}
+
+void arrayAsignarMascota(Persona p, Mascota mascota) { 
+    p->mascotas[p->cantMascotas] = m;
+    p->cantMascotas++;
+    if (p->cantMascotas == p->tamanioMascotas)
+    {
+        agrandarArray(p)
+    }
+}
+
+void agrandarArray(Persona p) { 
+    Mascota* nuevoArray = new Mascota[p->tamanioMascotas * 2]
+    for (int i = 0; i < p->tamanioMascotas; i++)
+    {
+        nuevoArray[i] = p->mascotas[i];
+    }
+    delete[] p->mascotas;
+    p->mascotas = nuevoArray;
+    p->tamanioMascotas = p->tamanioMascotas * 2;
+}
+
+Mascota mascotaP(Persona p) {
+    return p->mascota;
 }

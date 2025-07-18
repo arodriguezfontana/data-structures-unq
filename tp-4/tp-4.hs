@@ -1,20 +1,15 @@
--- PIZZAS
-
 data Pizza = Prepizza | Capa Ingrediente Pizza deriving Show
 data Ingrediente = Salsa | Queso | Jamon | Aceitunas Int deriving Show
 
 cantidadDeCapas :: Pizza -> Int
--- Dada una pizza devuelve la cantidad de ingredientes.
 cantidadDeCapas Prepizza = 0
 cantidadDeCapas (Capa i p) = 1 + cantidadDeCapas p
 
 armarPizza :: [Ingrediente] -> Pizza
--- Dada una lista de ingredientes construye una pizza.
 armarPizza [] = Prepizza
 armarPizza (i:is) = Capa i (armarPizza is)
 
 sacarJamon :: Pizza -> Pizza
--- Le saca los ingredientes que sean jamón a la pizza.
 sacarJamon Prepizza = Prepizza
 sacarJamon (Capa i p) = if sonMismoIngrediente Jamon i
                          then sacarJamon p
@@ -28,7 +23,6 @@ sonMismoIngrediente (Aceitunas _) (Aceitunas _) = True
 sonMismoIngrediente _ _ = False
 
 tieneSoloSalsaYQueso :: Pizza -> Bool
--- Dice si una pizza tiene solamente salsa y queso (o sea, no tiene de otros ingredientes. En particular, la prepizza, al no tener ningún ingrediente, debería dar verdadero).
 tieneSoloSalsaYQueso Prepizza = True
 tieneSoloSalsaYQueso (Capa i p) = esSalsaOQueso i && tieneSoloSalsaYQueso p
 
@@ -38,7 +32,6 @@ esSalsaOQueso Queso = True
 esSalsaOQueso _ = False
 
 duplicarAceitunas :: Pizza -> Pizza
--- Recorre cada ingrediente y si es aceitunas duplica su cantidad.
 duplicarAceitunas Prepizza = Prepizza
 duplicarAceitunas (Capa i p) = if sonAceitunas i
                                 then Capa (aceitunasDuplicadas i) (duplicarAceitunas p)
@@ -52,11 +45,8 @@ aceitunasDuplicadas :: Ingrediente -> Ingrediente
 aceitunasDuplicadas (Aceitunas n) = Aceitunas (n*2)
 
 cantCapasPorPizza :: [Pizza] -> [(Int, Pizza)]
--- Dada una lista de pizzas devuelve un par donde la primera componente es la cantidad de ingredientes de la pizza, y la respectiva pizza como segunda componente.
 cantCapasPorPizza [] = []
 cantCapasPorPizza (p:ps) = (cantidadDeCapas p, p) : (cantCapasPorPizza ps)
-
--- MAPA DE TESOROS CON BIFURCACIONES
 
 data Dir = Izq | Der deriving Show
 data Objeto = Tesoro | Chatarra deriving Show
@@ -64,7 +54,6 @@ data Cofre = Cofre [Objeto] deriving Show
 data Mapa = Fin Cofre | Bifurcacion Cofre Mapa Mapa deriving Show
 
 hayTesoro :: Mapa -> Bool
--- Indica si hay un tesoro en alguna parte del mapa.
 hayTesoro (Fin c) = hayTesoroEnCofre c
 hayTesoro (Bifurcacion c mi md) =  hayTesoroEnCofre c || (hayTesoro mi) || (hayTesoro md)
 
@@ -80,7 +69,6 @@ esTesoro Tesoro = True
 esTesoro _ = False
 
 hayTesoroEn :: [Dir] -> Mapa -> Bool
--- Indica si al final del camino hay un tesoro. Nota: el final de un camino se representa con una lista vacía de direcciones.
 hayTesoroEn [] m = hayTesoroAca m
 hayTesoroEn (d:ds) m = puedoAvanzar m && hayTesoroEn ds (mapaAvanzado d m)
     
@@ -103,7 +91,6 @@ esIzq Izq = True
 esIzq _ = False
 
 caminoAlTesoro :: Mapa -> [Dir]
--- Indica el camino al tesoro. Precondición: existe un tesoro y es único.
 caminoAlTesoro (Fin c) = []
 caminoAlTesoro (Bifurcacion c mi md) = if hayTesoroEnCofre c 
                                         then []
@@ -112,7 +99,6 @@ caminoAlTesoro (Bifurcacion c mi md) = if hayTesoroEnCofre c
                                              else Der : caminoAlTesoro md
 
 caminoDeLaRamaMasLarga :: Mapa -> [Dir]
--- Indica el camino de la rama más larga.
 caminoDeLaRamaMasLarga (Fin _) = []
 caminoDeLaRamaMasLarga (Bifurcacion c mi md) = if esRamaMasLarga mi md
                                                 then Izq : caminoDeLaRamaMasLarga mi
@@ -126,7 +112,6 @@ longitudCamino (Fin _) = 0
 longitudCamino (Bifurcacion _ m1 m2) = 1 + max (longitudCamino m1) (longitudCamino m2)
 
 tesorosPorNivel :: Mapa -> [[Objeto]]
--- Devuelve los tesoros separados por nivel en el árbol.
 tesorosPorNivel (Fin c) = [tesorosDe c]
 tesorosPorNivel (Bifurcacion c mi md) = tesorosDe c : zipListaDeListas (tesorosPorNivel mi) (tesorosPorNivel md)
 
@@ -147,15 +132,12 @@ singularSi x True = [x]
 singularSi _ _ = []
 
 todosLosCaminos :: Mapa -> [[Dir]]
--- Devuelve todos lo caminos en el mapa.
 todosLosCaminos (Fin _) = [[]]
 todosLosCaminos (Bifurcacion _ mi md) = agregoACada Izq (todosLosCaminos mi) ++ agregoACada Der (todosLosCaminos md)
 
 agregoACada :: a -> [[a]] -> [[a]]
 agregoACada _ [] = []
 agregoACada x (ys:yss) = (x : ys) : agregoACada x yss
-
--- NAVE ESPACIAL
 
 type SectorId = String
 type Tripulante = String
@@ -166,7 +148,6 @@ data Tree a = EmptyT | NodeT a (Tree a) (Tree a) deriving Show
 data Nave = N (Tree Sector) deriving Show
 
 sectores :: Nave -> [SectorId]
--- Propósito: Devuelve todos los sectores de la nave.
 sectores (N ts) = sectoresT ts
 
 sectoresT :: Tree Sector -> [SectorId]
@@ -177,7 +158,6 @@ sectorIdDe :: Sector -> SectorId
 sectorIdDe (S sid _ _) = sid
 
 poderDePropulsion :: Nave -> Int
--- Propósito: Devuelve la suma de poder de propulsión de todos los motores de la nave. Nota: el poder de propulsión es el número que acompaña al constructor de motores.
 poderDePropulsion (N ts) = poderDePropulsionT ts
 
 poderDePropulsionT :: Tree Sector -> Int
@@ -196,7 +176,6 @@ poderDePropulsionSiEsMotor (Motor i) = i
 poderDePropulsionSiEsMotor _ = 0
 
 barriles :: Nave -> [Barril]
--- Propósito: Devuelve todos los barriles de la nave.
 barriles (N ts) = barrilesT ts
 
 barrilesT :: Tree Sector -> [Barril]
@@ -215,7 +194,6 @@ barrilesSiEsAlmacen (Almacen bs) = bs
 barrilesSiEsAlmacen _ = []
 
 agregarASector :: [Componente] -> SectorId -> Nave -> Nave
--- Propósito: Añade una lista de componentes a un sector de la nave. Nota: ese sector puede no existir, en cuyo caso no añade componentes.
 agregarASector cs sid (N ts) = N (tsConComponentes cs sid ts)
 
 tsConComponentes :: [Componente] -> SectorId -> Tree Sector -> Tree Sector
@@ -230,7 +208,6 @@ sConComponentesAgregados :: [Componente] -> Sector -> Sector
 sConComponentesAgregados cs (S sid c2s ts) = S sid (cs++c2s) ts
 
 asignarTripulanteA :: Tripulante -> [SectorId] -> Nave -> Nave
--- Propósito: Incorpora un tripulante a una lista de sectores de la nave. Precondición: Todos los id de la lista existen en la nave.
 asignarTripulanteA t [] n = n
 asignarTripulanteA t (sid:sids) n = naveConTAgregadoEnS t sid (asignarTripulanteA t sids n)
 
@@ -246,7 +223,6 @@ sConTripulanteAgregadoSi t True (S sid cs ts) = S sid cs (t:ts)
 sConTripulanteAgregadoSi _ _ s = s
 
 sectoresAsignados :: Tripulante -> Nave -> [SectorId]
--- Propósito: Devuelve los sectores en donde aparece un tripulante dado.
 sectoresAsignados t (N ts) = sectoresAsignadosT t ts
 
 sectoresAsignadosT :: Tripulante -> Tree Sector -> [SectorId]
@@ -259,7 +235,6 @@ sectorSiAparece t (S sid cs ts) = if elem t ts
                                    else []
 
 tripulantes :: Nave -> [Tripulante]
--- Propósito: Devuelve la lista de tripulantes, sin elementos repetidos.
 tripulantes (N ts) = sinRepetidos (tripulanteT ts)
 
 tripulanteT :: Tree Sector -> [Tripulante]
@@ -273,8 +248,6 @@ sinRepetidos :: Eq a => [a] -> [a]
 sinRepetidos [] = []
 sinRepetidos (x:xs) = if elem x xs then sinRepetidos xs else x : sinRepetidos xs
 
--- MANADA DE LOBOS
-
 type Presa = String 
 type Territorio = String 
 type Nombre = String 
@@ -282,7 +255,6 @@ data Lobo = Cazador Nombre [Presa] Lobo Lobo Lobo | Explorador Nombre [Territori
 data Manada = M Lobo deriving Show
 
 buenaCaza :: Manada -> Bool
--- Propósito: dada una manada, indica si la cantidad de alimento cazado es mayor a la cantidad de crías.
 buenaCaza (M l) = cantPresas l > cantCrias l
 
 cantPresas :: Lobo -> Int
@@ -308,7 +280,6 @@ unoSi True = 1
 unoSi False = 0
 
 elAlfa :: Manada -> (Nombre, Int)
--- Propósito: dada una manada, devuelve el nombre del lobo con más presas cazadas, junto con su cantidad de presas. Nota: se considera que los exploradores y crías tienen cero presas cazadas, y que podrían formar parte del resultado si es que no existen cazadores con más de cero presas.
 elAlfa (M l) = elAlfaL l
 
 elAlfaL :: Lobo -> (Nombre, Int)
@@ -326,7 +297,6 @@ elMásAlfa (n1, i1) (n2, i2) = if i1 > i2
                                 else (n2, i2)
 
 losQueExploraron :: Territorio -> Manada -> [Nombre]
--- Propósito: dado un territorio y una manada, devuelve los nombres de los exploradores que pasaron por dicho territorio.
 losQueExploraron t (M l) = losQueExploraronL t l
 
 losQueExploraronL :: Territorio -> Lobo -> [Nombre]
@@ -335,7 +305,6 @@ losQueExploraronL t (Cazador _ _ l1 l2 l3) = losQueExploraronL t l1 ++ losQueExp
 losQueExploraronL t (Explorador n ts l1 l2) = singularSi n (elem t ts) ++ losQueExploraronL t l1 ++ losQueExploraronL t l2
 
 exploradoresPorTerritorio :: Manada -> [(Territorio, [Nombre])]
--- Propósito: dada una manada, denota la lista de los pares cuyo primer elemento es un territorio y cuyo segundo elemento es la lista de los nombres de los exploradores que exploraron dicho territorio. Los territorios no deben repetirse.
 exploradoresPorTerritorio m = asociarPorTerritorio (territorios m) m
 
 asociarPorTerritorio :: [Territorio] -> Manada -> -> [(Territorio, [Nombre])]
@@ -355,7 +324,6 @@ sinRepetidos [] = []
 sinRepetidos (x:xs) = if elem x xs then sinRepetidos xs else x : sinRepetidos xs
 
 cazadoresSuperioresDe :: Nombre -> Manada -> [Nombre]
--- Propósito: dado el nombre de un lobo y una manada, indica el nombre de todos los cazadores que tienen como subordinado al lobo dado (puede ser un subordinado directo, o el subordinado de un subordinado). Precondición: hay un lobo con dicho nombre y es único.
 cazadoresSuperioresDe n m = cConSubordinadoA n m
 
 cConSubordinadoA :: Nombre -> Lobo -> [Nombre]
@@ -369,4 +337,3 @@ cConSubordinadoA n (Cazador n2 ps l1 l2 l3) = let c1 = cConSubordinadoA n l1
                                              in if n == n2
                                                   then []
                                                   else n2 : (c1 ++ c2 ++ c3)
-                                                       

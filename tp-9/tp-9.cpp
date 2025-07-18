@@ -89,8 +89,7 @@ void rPrimerosN(int n, string s)
     if (n > 0)
     {
         rPrimerosN(n - 1, s)
-                cout
-            << s[n - 1] << endl;
+        cout << s[n - 1] << endl;
     }
 }
 
@@ -101,7 +100,7 @@ bool iPertenece(char c, string s)
     {
         i++;
     }
-    return s[i] == c;
+    return s[i] != '\0' && s[i] == c;
 }
 
 bool rPertenece(char c, string s)
